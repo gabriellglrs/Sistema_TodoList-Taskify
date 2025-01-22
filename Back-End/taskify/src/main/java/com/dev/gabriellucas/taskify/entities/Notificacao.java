@@ -1,5 +1,6 @@
 package com.dev.gabriellucas.taskify.entities;
 
+import com.dev.gabriellucas.taskify.enums.StatusNotificacao;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,4 +16,7 @@ public class Notificacao {
      private String titulo;
      private String mensagem;
      private LocalDateTime dataEnvio;
+     @Enumerated(EnumType.STRING)
+     private StatusNotificacao status;
+
 }

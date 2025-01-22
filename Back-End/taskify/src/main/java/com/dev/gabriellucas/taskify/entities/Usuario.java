@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -16,4 +18,12 @@ public class Usuario {
      private String email;
      private String senha;
      private LocalDateTime dataCadastro;
+
+     @OneToMany(mappedBy = "usuario")
+     private Set<Lista> listas = new HashSet<>();
+
+     @OneToMany
+     @JoinColumn(name = "usuario_id")
+     private Set<Notificacao> notificacoes= new HashSet<>();
+
 }

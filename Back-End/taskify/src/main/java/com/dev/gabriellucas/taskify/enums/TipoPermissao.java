@@ -1,6 +1,6 @@
 package com.dev.gabriellucas.taskify.enums;
 
-public enum TypoPermissao {
+public enum TipoPermissao {
      VISUALIZACAO,
      EDICAO,
      ADMINISTRACAO;

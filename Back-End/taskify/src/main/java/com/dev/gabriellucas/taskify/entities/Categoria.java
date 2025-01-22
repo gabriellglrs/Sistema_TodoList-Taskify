@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -16,4 +18,6 @@ public class Categoria {
      private String descricao;
      private String cor;
 
+     @ManyToMany(mappedBy = "categorias")
+     private Set<Tarefa> tarefas = new HashSet<>();
 }
