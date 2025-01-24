@@ -3,25 +3,30 @@ package com.dev.gabriellucas.taskify.entities;
 import com.dev.gabriellucas.taskify.enums.PrioridadeTarefa;
 import com.dev.gabriellucas.taskify.enums.StatusTarefa;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "tb_tarefa")
 public class Tarefa {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
+     @EqualsAndHashCode.Include
      private Long id;
+
      private String titulo;
      private String descricao;
      private LocalDateTime dataCriacao;
      private LocalDateTime dataVencimento;
+
      @Enumerated(EnumType.STRING)
      private PrioridadeTarefa prioridade;
+
      @Enumerated(EnumType.STRING)
      private StatusTarefa status;
 
