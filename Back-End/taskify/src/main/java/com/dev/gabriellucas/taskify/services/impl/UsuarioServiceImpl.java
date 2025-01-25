@@ -36,7 +36,7 @@ public class UsuarioServiceImpl implements UsuarioService {
      }
 
      @Override
-     public UsuarioResponseDTO save(UsuarioRequestDTO requestDTO) {
+     public UsuarioResponseDTO saveUsuario(UsuarioRequestDTO requestDTO) {
           Usuario usuario = usuarioMapper.toEntity(requestDTO);
           Usuario sevedUsuario = usuarioRepository.save(usuario);
           return usuarioMapper.toDTO(sevedUsuario);
@@ -44,14 +44,14 @@ public class UsuarioServiceImpl implements UsuarioService {
      }
 
      @Override
-     public UsuarioResponseDTO findById(Long id) {
+     public UsuarioResponseDTO findByIdUsuario(Long id) {
           Usuario usuario = usuarioRepository.findById(id)
                   .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado, id: " + id));
           return usuarioMapper.toDTO(usuario);
      }
 
      @Override
-     public UsuarioResponseDTO update(Long id, UsuarioRequestDTO requestDTO) {
+     public UsuarioResponseDTO updateUsuario(Long id, UsuarioRequestDTO requestDTO) {
           Usuario usuario = usuarioRepository.findById(id)
                   .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado, id: " + id));
           usuarioMapper.updateEntityFromDTO(requestDTO, usuario);
@@ -60,7 +60,7 @@ public class UsuarioServiceImpl implements UsuarioService {
      }
 
      @Override
-     public UsuarioResponseDTO updateParcial(Long id, UsuarioRequestPatchDTO requestDTO) {
+     public UsuarioResponseDTO updateParcialUsuario(Long id, UsuarioRequestPatchDTO requestDTO) {
           Usuario usuario = usuarioRepository.findById(id)
                   .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado, id: " + id));
 
@@ -75,7 +75,7 @@ public class UsuarioServiceImpl implements UsuarioService {
      }
 
      @Override
-     public void deleteById(Long id) {
+     public void deleteByIdUsuario(Long id) {
           if (!usuarioRepository.existsById(id)) {
                throw new ResourceNotFoundException("Usuário não encontrado, id: " + id);
           }

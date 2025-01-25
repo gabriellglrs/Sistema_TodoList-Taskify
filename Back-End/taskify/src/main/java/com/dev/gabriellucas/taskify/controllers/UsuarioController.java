@@ -23,37 +23,37 @@ public class UsuarioController {
 
      @PostMapping
      public ResponseEntity<UsuarioResponseDTO> save(@Valid @RequestBody UsuarioRequestDTO requestDTO) {
-          UsuarioResponseDTO responseDTO = usuarioService.save(requestDTO);
+          UsuarioResponseDTO responseDTO = usuarioService.saveUsuario(requestDTO);
           return ResponseEntity
                   .created(ServletUriComponentsBuilder
                           .fromCurrentRequest() // Pega a URI atual
                           .path("/{id}") // Adiciona o ID do novo produto à URI
-                          .buildAndExpand(responseDTO.getId()) // Expande o {id} com o ID real
+                          .buildAndExpand(responseDTO) // Expande o {id} com o ID real
                           .toUri()) // Constrói a URI completa
                   .body(responseDTO);
      }
 
      @GetMapping("/{id}")
      public ResponseEntity<UsuarioResponseDTO> findById(@PathVariable Long id) {
-          UsuarioResponseDTO responseDTO = usuarioService.findById(id);
+          UsuarioResponseDTO responseDTO = usuarioService.findByIdUsuario(id);
           return ResponseEntity.ok(responseDTO);
      }
 
      @PutMapping("/{id}")
      public ResponseEntity<UsuarioResponseDTO> upadate(@PathVariable Long id, @Valid @RequestBody UsuarioRequestDTO requestDTO) {
-          UsuarioResponseDTO responseDTO = usuarioService.update(id, requestDTO);
+          UsuarioResponseDTO responseDTO = usuarioService.updateUsuario(id, requestDTO);
           return ResponseEntity.ok(responseDTO);
      }
 
      @PatchMapping("/{id}")
      public ResponseEntity<UsuarioResponseDTO> upadateParcial(@PathVariable Long id, @Valid @RequestBody UsuarioRequestPatchDTO requestDTO) {
-          UsuarioResponseDTO responseDTO = usuarioService.updateParcial(id, requestDTO);
+          UsuarioResponseDTO responseDTO = usuarioService.updateParcialUsuario(id, requestDTO);
           return ResponseEntity.ok(responseDTO);
      }
 
      @DeleteMapping("/{id}")
      public ResponseEntity<Void> delete(@PathVariable Long id) {
-          usuarioService.deleteById(id);
+          usuarioService.deleteByIdUsuario(id);
           return ResponseEntity.noContent().build();
      }
 
