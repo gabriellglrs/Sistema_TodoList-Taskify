@@ -18,4 +18,8 @@ public class Historico {
      private String acao;
      private LocalDateTime dataModificacao;
      private String descricao;
+
+     @ManyToOne
+     @JoinColumn(name = "tarefa_id", nullable = false)
+     private Tarefa tarefa;
 }

@@ -17,4 +17,8 @@ public class Comentario {
 
      private String texto;
      private LocalDateTime dataCriacao;
+
+     @ManyToOne
+     @JoinColumn(name = "tarefa_id", nullable = false)
+     private Tarefa tarefa;
 }
