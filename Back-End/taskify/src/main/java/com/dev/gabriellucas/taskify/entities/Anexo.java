@@ -17,4 +17,8 @@ public class Anexo {
      private String tipo;
      private Long tamanho;
      private String url;
+
+     @ManyToOne
+     @JoinColumn(name = "tarefa_id", nullable = false)
+     private Tarefa tarefa;
 }

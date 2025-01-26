@@ -34,16 +34,13 @@ public class Tarefa {
      @JoinColumn(name = "lista_id")
      private Lista lista;
 
-     @OneToMany
-     @JoinColumn(name = "tarefa_id")
+     @OneToMany(mappedBy = "tarefa", cascade = CascadeType.ALL, orphanRemoval = true)
      private Set<Comentario> comentarios = new HashSet<>();
 
-     @OneToMany
-     @JoinColumn(name = "tarefa_id")
+     @OneToMany(mappedBy = "tarefa", cascade = CascadeType.ALL, orphanRemoval = true)
      private Set<Anexo> anexos = new HashSet<>();
 
-     @OneToMany
-     @JoinColumn(name = "tarefa_id")
+     @OneToMany(mappedBy = "tarefa", cascade = CascadeType.ALL, orphanRemoval = true)
      private Set<Historico> historicos = new HashSet<>();
 
      @ManyToMany
