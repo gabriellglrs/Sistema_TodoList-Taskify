@@ -3,6 +3,7 @@ package com.dev.gabriellucas.taskify.services.impl;
 import com.dev.gabriellucas.taskify.DTO.*;
 import com.dev.gabriellucas.taskify.entities.*;
 import com.dev.gabriellucas.taskify.enums.StatusTarefa;
+import com.dev.gabriellucas.taskify.exceptions.BusinessException;
 import com.dev.gabriellucas.taskify.exceptions.ResourceNotFoundException;
 import com.dev.gabriellucas.taskify.mappers.AnexoMapper;
 import com.dev.gabriellucas.taskify.mappers.ComentarioMapper;
@@ -49,6 +50,7 @@ public class TarefaServiceImpl implements TarefaService {
     public TarefaResponseDTO saveTarefa(TarefaRequestDTO request, Long idLista) {
         Lista lista = listaRepository.findById(idLista)
                 .orElseThrow(() -> new ResourceNotFoundException("Lista não encontrada, id:" + idLista));
+        checkQuantity(idLista);
         Tarefa entity = mapper.toEntity(request);
         entity.setLista(lista);
         return mapper.toDto(repository.save(entity));
@@ -118,6 +120,13 @@ public class TarefaServiceImpl implements TarefaService {
         return historicos.stream()
                 .map(historicoMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    protected void checkQuantity(Long id){
+        int quantidade = repository.countTarefasByListaId(id);
+        if(quantidade >= 1000){
+            throw new BusinessException("Limite de 1000 tarefas por lista atingido para a lista com ID: " + id);
+        }
     }
 
 
