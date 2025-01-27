@@ -15,7 +15,6 @@ import com.dev.gabriellucas.taskify.repositories.ListaRepository;
 import com.dev.gabriellucas.taskify.repositories.TarefaRepository;
 import com.dev.gabriellucas.taskify.repositories.UsuarioRepository;
 import com.dev.gabriellucas.taskify.services.ListaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,6 +58,7 @@ public class ListaServiceImpl implements ListaService {
      public ListaResponseDTO updateLista(Long id, ListaRequestDTO requestDTO) {
           Lista lista = listaRepository.findById(id)
                   .orElseThrow(() -> new ResourceNotFoundException("Lista não encontrada, id:" + id));
+          validateListaUpdate(lista);
           listaMapper.updateEntityFromDTO(requestDTO, lista);
           return listaMapper.toDTO(listaRepository.save(lista));
      }
@@ -68,6 +68,7 @@ public class ListaServiceImpl implements ListaService {
      public ListaResponseDTO updateParcialLista(Long id, ListaRequestPatchDTO requestDTO) {
           Lista lista = listaRepository.findById(id)
                   .orElseThrow(() -> new ResourceNotFoundException("Lista não encontrada, id:" + id));
+          validateListaUpdate(lista);
           if (requestDTO.getTitulo() != null) lista.setTitulo(requestDTO.getTitulo());
           if (requestDTO.getDescricao() != null) lista.setDescricao(requestDTO.getDescricao());
           if (requestDTO.getDataCriacao() != null) lista.setDataCriacao(requestDTO.getDataCriacao());
@@ -115,5 +116,9 @@ public class ListaServiceImpl implements ListaService {
           return listaMapper.toDTO(listaRepository.save(lista));
      }
 
-
+     private void validateListaUpdate(Lista lista) {
+          if (lista.getStatus() == StatusLista.ARQUIVADA) {
+               throw new BusinessException("Alterações não são permitidas em listas arquivadas.");
+          }
+     }
 }
