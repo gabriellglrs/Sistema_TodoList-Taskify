@@ -44,4 +44,10 @@ public class ListaController {
         ListaResponseDTO responseDTO = listaService.updateParcialLista(id, requestDTO);
         return ResponseEntity.ok(responseDTO);
     }
+
+    @PutMapping("/{id}/arquivar/{userId}")
+    public ResponseEntity<Void> archiveLista(@PathVariable Long id, @PathVariable Long userId) {
+        listaService.archiveLista(id, userId);
+        return ResponseEntity.noContent().build();
+    }
 }

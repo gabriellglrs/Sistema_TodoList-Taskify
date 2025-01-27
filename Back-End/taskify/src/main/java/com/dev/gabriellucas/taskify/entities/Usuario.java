@@ -22,10 +22,10 @@ public class Usuario {
      private String senha;
      private LocalDateTime dataCadastro;
 
-     @OneToMany(mappedBy = "usuario")
+     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
      private Set<Lista> listas = new HashSet<>();
 
-     @OneToMany(mappedBy = "usuario")
+     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
      private Set<Notificacao> notificacoes= new HashSet<>();
 
 }

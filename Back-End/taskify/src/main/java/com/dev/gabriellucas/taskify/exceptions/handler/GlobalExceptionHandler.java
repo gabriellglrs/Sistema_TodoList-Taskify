@@ -1,5 +1,6 @@
 package com.dev.gabriellucas.taskify.exceptions.handler;
 
+import com.dev.gabriellucas.taskify.exceptions.BusinessException;
 import com.dev.gabriellucas.taskify.exceptions.DatabaseException;
 import com.dev.gabriellucas.taskify.exceptions.ResourceNotFoundException;
 import com.dev.gabriellucas.taskify.DTO.ErroResponseDTO;
@@ -20,7 +21,7 @@ public class GlobalExceptionHandler {
      @ExceptionHandler(ResourceNotFoundException.class)
      public ResponseEntity<ErroResponseDTO> resourceNotFound(ResourceNotFoundException exception, HttpServletRequest httpServletRequest) {
 
-                  ErroResponseDTO erroResponseDTO = ErroResponseDTO.builder()
+          ErroResponseDTO erroResponseDTO = ErroResponseDTO.builder()
                   .timestamp(Instant.now())
                   .status(HttpStatus.NOT_FOUND.value())
                   .code(HttpStatus.NOT_FOUND.name())
@@ -42,6 +43,20 @@ public class GlobalExceptionHandler {
                   .details("A entidade não pode ser deletada porque está associada com outra entidade. Para prosseguir com a exclusão, certifique-se de remover ou desassociar todas as entidades relacionadas.")
                   .path(httpServletRequest.getRequestURI())
                   .build();
+          return ResponseEntity.status(erroResponseDTO.getStatus()).body(erroResponseDTO);
+     }
+
+     @ExceptionHandler(BusinessException.class)
+     public ResponseEntity<ErroResponseDTO> business(BusinessException exception, HttpServletRequest httpServletRequest) {
+          ErroResponseDTO erroResponseDTO = ErroResponseDTO.builder()
+                  .timestamp(Instant.now())
+                  .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
+                  .code(HttpStatus.UNPROCESSABLE_ENTITY.name())
+                  .message(exception.getMessage())
+                  .details("Violações de regras de negócio")
+                  .path(httpServletRequest.getRequestURI())
+                  .build();
+
           return ResponseEntity.status(erroResponseDTO.getStatus()).body(erroResponseDTO);
      }
 

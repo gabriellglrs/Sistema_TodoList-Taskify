@@ -9,5 +9,6 @@ public interface ListaService {
     ListaResponseDTO findByIdLista(Long id);
     ListaResponseDTO updateLista(Long id, ListaRequestDTO requestDTO);
     ListaResponseDTO updateParcialLista(Long id, ListaRequestPatchDTO requestDTO);
+    void archiveLista(Long id, Long userId);
 
 }
