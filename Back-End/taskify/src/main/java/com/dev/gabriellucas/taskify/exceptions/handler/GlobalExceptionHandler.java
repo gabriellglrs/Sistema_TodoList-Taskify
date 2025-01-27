@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public class GlobalExceptionHandler {
      public ResponseEntity<ErroResponseDTO> resourceNotFound(ResourceNotFoundException exception, HttpServletRequest httpServletRequest) {
 
           ErroResponseDTO erroResponseDTO = ErroResponseDTO.builder()
-                  .timestamp(Instant.now())
+                  .timestamp(LocalDateTime.now())
                   .status(HttpStatus.NOT_FOUND.value())
                   .code(HttpStatus.NOT_FOUND.name())
                   .message(exception.getMessage())
@@ -36,7 +37,7 @@ public class GlobalExceptionHandler {
      public ResponseEntity<ErroResponseDTO> database(DatabaseException exception, HttpServletRequest httpServletRequest) {
 
           ErroResponseDTO erroResponseDTO = ErroResponseDTO.builder()
-                  .timestamp(Instant.now())
+                  .timestamp(LocalDateTime.now())
                   .status(HttpStatus.BAD_REQUEST.value())
                   .code(HttpStatus.BAD_REQUEST.name())
                   .message(exception.getMessage())
@@ -49,7 +50,7 @@ public class GlobalExceptionHandler {
      @ExceptionHandler(BusinessException.class)
      public ResponseEntity<ErroResponseDTO> business(BusinessException exception, HttpServletRequest httpServletRequest) {
           ErroResponseDTO erroResponseDTO = ErroResponseDTO.builder()
-                  .timestamp(Instant.now())
+                  .timestamp(LocalDateTime.now())
                   .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
                   .code(HttpStatus.UNPROCESSABLE_ENTITY.name())
                   .message(exception.getMessage())
@@ -76,8 +77,16 @@ public class GlobalExceptionHandler {
 
      // Tratamento de outras exceções genéricas
      @ExceptionHandler(Exception.class)
-     public ResponseEntity<String> handleGenericException(Exception ex) {
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro inesperado: " + ex.getMessage());
+     public ResponseEntity<String> handleGenericException(Exception exception, HttpServletRequest httpServletRequest) {
+          ErroResponseDTO erroResponseDTO = ErroResponseDTO.builder()
+                  .timestamp(LocalDateTime.now())
+                  .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                  .code(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                  .message(exception.getMessage())
+                  .details("Erro inesperado!")
+                  .path(httpServletRequest.getRequestURI())
+                  .build();
+          return ResponseEntity.status(erroResponseDTO.getStatus()).body(erroResponseDTO.toString());
      }
 
 }
