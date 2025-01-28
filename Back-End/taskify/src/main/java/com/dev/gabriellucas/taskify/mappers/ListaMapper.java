@@ -17,11 +17,8 @@ public interface ListaMapper {
 
      Lista toEntity(ListaRequestDTO requestDTO);
 
-     @Named("toDTO")
+     @Mapping(source = "usuario.id", target = "usuarioId")
      ListaResponseDTO toDTO(Lista lista);
-
-     @Named("map")
-     ListaResponseDTO map(Lista listaMap);
 
      List<ListaResponseDTO> toDTOListLista(List<Lista> listas);
 

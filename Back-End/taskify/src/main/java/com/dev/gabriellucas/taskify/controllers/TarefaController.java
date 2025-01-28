@@ -49,7 +49,7 @@ public class TarefaController {
         return ResponseEntity.ok().body(responseDTO);
     }
 
-    @PatchMapping(value = "/{id}/concluir")
+    @PutMapping(value = "/{id}/concluir")
     public ResponseEntity<TarefaResponseDTO> completeTarefa(@PathVariable Long id) {
         TarefaResponseDTO responseDTO = service.completeTarefa(id);
         return ResponseEntity.ok().body(responseDTO);

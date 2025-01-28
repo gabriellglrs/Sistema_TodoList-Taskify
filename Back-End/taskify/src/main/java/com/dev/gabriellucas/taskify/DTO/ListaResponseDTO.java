@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 public class ListaResponseDTO {
      private Long id;
+     private Long usuarioId;
      private String titulo;
      private String descricao;
      private LocalDateTime dataCriacao;

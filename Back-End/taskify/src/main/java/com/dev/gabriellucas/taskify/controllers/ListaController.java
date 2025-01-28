@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/api/listas")
 public class ListaController {
@@ -50,4 +52,23 @@ public class ListaController {
         listaService.archiveLista(id, userId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("{id}/tarefas")
+    public ResponseEntity<List<TarefaResponseDTO>> getTarefa(@PathVariable Long id) {
+        List<TarefaResponseDTO> responseDTOList = listaService.getTarefa(id);
+        return ResponseEntity.ok(responseDTOList);
+    }
+
+    @PostMapping("{id}/usuarios/{userId}")
+    public ResponseEntity<ListaResponseDTO> addUserToLista(@PathVariable Long id, @PathVariable Long userId) {
+        ListaResponseDTO responseDTO = listaService.addUserToLista(id, userId);
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @DeleteMapping("/{id}/usuarios")
+    public ResponseEntity<ListaResponseDTO> deleteUserFromLista(@PathVariable Long id) {
+        ListaResponseDTO responseDTO = listaService.removeUserFromLista(id);
+        return ResponseEntity.ok(responseDTO);
+    }
+
 }

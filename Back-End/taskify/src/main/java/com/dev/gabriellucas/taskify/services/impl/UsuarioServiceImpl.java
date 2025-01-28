@@ -13,6 +13,8 @@ import com.dev.gabriellucas.taskify.repositories.UsuarioRepository;
 import com.dev.gabriellucas.taskify.services.UsuarioService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,6 +38,7 @@ public class UsuarioServiceImpl implements UsuarioService {
      }
 
      @Override
+     @Transactional
      public UsuarioResponseDTO saveUsuario(UsuarioRequestDTO requestDTO) {
           Usuario usuario = usuarioMapper.toEntity(requestDTO);
           Usuario sevedUsuario = usuarioRepository.save(usuario);
@@ -44,6 +47,7 @@ public class UsuarioServiceImpl implements UsuarioService {
      }
 
      @Override
+     @Transactional(readOnly = true)
      public UsuarioResponseDTO findByIdUsuario(Long id) {
           Usuario usuario = usuarioRepository.findById(id)
                   .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado, id: " + id));
@@ -51,6 +55,7 @@ public class UsuarioServiceImpl implements UsuarioService {
      }
 
      @Override
+     @Transactional
      public UsuarioResponseDTO updateUsuario(Long id, UsuarioRequestDTO requestDTO) {
           Usuario usuario = usuarioRepository.findById(id)
                   .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado, id: " + id));
@@ -60,6 +65,7 @@ public class UsuarioServiceImpl implements UsuarioService {
      }
 
      @Override
+     @Transactional
      public UsuarioResponseDTO updateParcialUsuario(Long id, UsuarioRequestPatchDTO requestDTO) {
           Usuario usuario = usuarioRepository.findById(id)
                   .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado, id: " + id));
@@ -75,6 +81,7 @@ public class UsuarioServiceImpl implements UsuarioService {
      }
 
      @Override
+     @Transactional()
      public void deleteByIdUsuario(Long id) {
           if (!usuarioRepository.existsById(id)) {
                throw new ResourceNotFoundException("Usuário não encontrado, id: " + id);
@@ -89,6 +96,7 @@ public class UsuarioServiceImpl implements UsuarioService {
      }
 
      @Override
+     @Transactional(readOnly = true)
      public List<ListaResponseDTO> findByUsuarioListas(Long id) {
           Usuario usuario = usuarioRepository.findById(id)
                   .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado, id: " + id));
@@ -96,6 +104,7 @@ public class UsuarioServiceImpl implements UsuarioService {
      }
 
      @Override
+     @Transactional(readOnly = true)
      public List<NotificacaoResponseDTO> findByUsuarioNotificacoes(Long id) {
           Usuario usuario = usuarioRepository.findById(id)
                   .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado, id: " + id));
