@@ -14,4 +14,6 @@ public interface TarefaService {
     List<ComentarioResponseDTO> findAllCommentsByTarefaId(Long id);
     List<AnexoResponseDTO> findAllAnexosByTarefaId(Long id);
     List<HistoricoResponseDTO> findAllHistoricosByTarefaId(Long id);
+    void addEtiquetaToTarefa(Long idTarefa, List<EtiquetaInsertRequestDTO> request);
+    void removeEtiquetaFromTarefa(Long idTarefa, Long idEtiqueta);
 }

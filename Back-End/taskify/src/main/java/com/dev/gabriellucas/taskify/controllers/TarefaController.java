@@ -73,5 +73,19 @@ public class TarefaController {
         return ResponseEntity.ok().body(historicos);
     }
 
+    @PostMapping("/{id}/etiquetas")
+    public ResponseEntity<Void> addEtiquetasToTarefa(
+            @PathVariable Long id,
+            @RequestBody List<EtiquetaInsertRequestDTO> etiquetas) {
+        service.addEtiquetaToTarefa(id, etiquetas);
+        return ResponseEntity.ok().build();
+    }
 
+    @DeleteMapping("/{idTarefa}/etiquetas/{idEtiqueta}")
+    public ResponseEntity<Void> removeEtiquetaFromTarefa(
+            @PathVariable Long idTarefa,
+            @PathVariable Long idEtiqueta) {
+        service.removeEtiquetaFromTarefa(idTarefa, idEtiqueta);
+        return ResponseEntity.noContent().build();
+    }
 }
