@@ -30,10 +30,12 @@ public class TarefaServiceImpl implements TarefaService {
     private final AnexoMapper anexoMapper;
     private final HistoricoRepository historicoRepository;
     private final HistoricoMapper historicoMapper;
+    private final EtiquetaRepository etiquetaRepository;
 
     public TarefaServiceImpl(TarefaRepository repository, TarefaMapper mapper, ListaRepository listaRepository,
     ComentarioRepository comentarioRepository, ComentarioMapper comentarioMapper, AnexoRepository anexoRepository,
-                             AnexoMapper anexoMapper, HistoricoRepository historicoRepository, HistoricoMapper historicoMapper) {
+                             AnexoMapper anexoMapper, HistoricoRepository historicoRepository, HistoricoMapper historicoMapper,
+                             EtiquetaRepository etiquetaRepository) {
         this.repository = repository;
         this.mapper = mapper;
         this.listaRepository = listaRepository;
@@ -43,6 +45,7 @@ public class TarefaServiceImpl implements TarefaService {
         this.anexoMapper = anexoMapper;
         this.historicoRepository = historicoRepository;
         this.historicoMapper = historicoMapper;
+        this.etiquetaRepository = etiquetaRepository;
     }
 
     @Override
@@ -120,6 +123,54 @@ public class TarefaServiceImpl implements TarefaService {
         return historicos.stream()
                 .map(historicoMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void addEtiquetaToTarefa(Long idTarefa, List<EtiquetaInsertRequestDTO> request) {
+        Tarefa entity = repository.findById(idTarefa)
+                .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id:" + idTarefa));
+
+        if (entity.getEtiquetas().size() + request.size() > 10) {
+            throw new BusinessException("Limite máximo de 10 etiquetas por tarefa alcançado");
+        }
+
+        List<Long> idsEtiquetas = request.stream()
+                .map(EtiquetaInsertRequestDTO::getIdEtiqueta)
+                .toList();
+
+        List<Etiqueta> etiquetas = etiquetaRepository.findAllById(idsEtiquetas);
+
+        if (etiquetas.size() != idsEtiquetas.size()) {
+            throw new ResourceNotFoundException("Uma ou mais etiquetas não foram encontradas.");
+        }
+
+        for (Etiqueta etiqueta : etiquetas) {
+            boolean existsSameName = entity.getEtiquetas().stream()
+                    .anyMatch(e -> e.getNome().equalsIgnoreCase(etiqueta.getNome()));
+            if (existsSameName) {
+                throw new BusinessException("Etiqueta com o nome '" + etiqueta.getNome() + "' já está associada à tarefa");
+            }
+        }
+
+        entity.getEtiquetas().addAll(etiquetas);
+        repository.save(entity);
+    }
+
+    @Override
+    public void removeEtiquetaFromTarefa(Long idTarefa, Long idEtiqueta) {
+        Tarefa entity = repository.findById(idTarefa)
+                .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id: " + idTarefa));
+
+        boolean etiquetaExists = entity.getEtiquetas().stream()
+                .anyMatch(etiqueta -> etiqueta.getId().equals(idEtiqueta));
+
+        if (!etiquetaExists) {
+            throw new BusinessException("Etiqueta com ID " + idEtiqueta + " não está associada à tarefa");
+        }
+
+        entity.getEtiquetas().removeIf(etiqueta -> etiqueta.getId().equals(idEtiqueta));
+
+        repository.save(entity);
     }
 
     protected void checkQuantity(Long id){
