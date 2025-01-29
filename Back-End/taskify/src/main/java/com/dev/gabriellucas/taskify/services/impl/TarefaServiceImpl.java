@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -127,6 +128,7 @@ public class TarefaServiceImpl implements TarefaService {
     }
 
     @Override
+    @Transactional
     public void addEtiquetaToTarefa(Long idTarefa, List<EtiquetaInsertRequestDTO> request) {
         Tarefa entity = repository.findById(idTarefa)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id:" + idTarefa));
@@ -158,6 +160,7 @@ public class TarefaServiceImpl implements TarefaService {
     }
 
     @Override
+    @Transactional
     public void removeEtiquetaFromTarefa(Long idTarefa, Long idEtiqueta) {
         Tarefa entity = repository.findById(idTarefa)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id: " + idTarefa));
@@ -174,12 +177,49 @@ public class TarefaServiceImpl implements TarefaService {
         repository.save(entity);
     }
 
+    @Override
+    @Transactional
+    public TarefaResponseDTO addCategoriaToTarefa(Long tarefaId, Long categoriaId) {
+        Tarefa tarefa = repository.findById(tarefaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id: " + tarefaId));
+
+        Categoria categoria = categoriaRepository.findById(categoriaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada, id: " + categoriaId));
+
+        if (tarefa.getCategorias() == null) {
+            tarefa.setCategorias(new HashSet<>()); // Inicializa caso esteja nulo
+        }
+
+        tarefa.getCategorias().add(categoria);
+
+
+        return tarefaMapper.toDto(repository.save(tarefa));
+    }
+
+    @Override
+    @Transactional
+    public TarefaResponseDTO removeCategoriaFromTarefa(Long tarefaId, Long categoriaId) {
+        Tarefa tarefa = repository.findById(tarefaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id: " + tarefaId));
+
+        Categoria categoria = categoriaRepository.findById(categoriaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada, id: " + categoriaId));
+
+        // Verifica se a tarefa possui categorias associadas
+        if (tarefa.getCategorias() != null && tarefa.getCategorias().contains(categoria)) {
+            tarefa.getCategorias().remove(categoria); // Remove a categoria da tarefa
+        } else {
+            throw new ResourceNotFoundException("A tarefa não contém essa categoria.");
+        }
+
+        return tarefaMapper.toDto(repository.save(tarefa));
+    }
+
     protected void checkQuantity(Long id){
         int quantidade = repository.countTarefasByListaId(id);
         if(quantidade >= 1000){
             throw new BusinessException("Limite de 1000 tarefas por lista atingido para a lista com ID: " + id);
         }
     }
-
 
 }

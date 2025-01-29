@@ -67,4 +67,5 @@ public class CategoriaServiceImpl implements CategoriaService {
                throw new DatabaseException("Violação de integridade");
           }
      }
+
 }

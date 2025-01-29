@@ -21,15 +21,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EtiquetaServiceImpl implements EtiquetaService {
 
-    private final EtiquetaMapper mapper;
+    private final EtiquetaMapper etiquetaMapper;
     private final EtiquetaRepository repository;
 
     @Override
     @Transactional
     public EtiquetaResponseDTO saveEtiqueta(EtiquetaRequestDTO request) {
         maxEtiquetas();
-        Etiqueta etiqueta = mapper.toEntity(request);
-        return mapper.toDto(repository.save(etiqueta));
+        Etiqueta etiqueta = etiquetaMapper.toEntity(request);
+        return etiquetaMapper.toDto(repository.save(etiqueta));
     }
 
     @Override
@@ -37,7 +37,7 @@ public class EtiquetaServiceImpl implements EtiquetaService {
     public EtiquetaResponseDTO findEtiquetaById(Long id) {
         Optional<Etiqueta> obj = repository.findById(id);
         Etiqueta entity = obj.orElseThrow(() -> new ResourceNotFoundException("Etiqueta não encontrada, ID:" + id));
-        return mapper.toDto(entity);
+        return etiquetaMapper.toDto(entity);
     }
 
     @Override
@@ -46,8 +46,8 @@ public class EtiquetaServiceImpl implements EtiquetaService {
         Etiqueta entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Etiqueta não encontrada, ID:" + id));
         nameAlreadyExist(entity, request.getNome());
-        mapper.updateEntityFromDTO(request, entity);
-        return mapper.toDto(repository.save(entity));
+        etiquetaMapper.updateEntityFromDTO(request, entity);
+        return etiquetaMapper.toDto(repository.save(entity));
     }
 
     @Override
@@ -77,7 +77,7 @@ public class EtiquetaServiceImpl implements EtiquetaService {
             entity.setCor(request.getCor());
         }
 
-        return mapper.toDto(repository.save(entity));
+        return etiquetaMapper.toDto(repository.save(entity));
     }
 
     protected void nameAlreadyExist(Etiqueta entity, String nome){
