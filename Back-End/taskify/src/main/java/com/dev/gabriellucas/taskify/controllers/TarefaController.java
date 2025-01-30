@@ -17,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/tarefas")
 public class TarefaController {
+
     private final TarefaService service;
     private final AnexoService anexoService;
 
@@ -94,6 +95,24 @@ public class TarefaController {
         service.removeEtiquetaFromTarefa(idTarefa, idEtiqueta);
         return ResponseEntity.noContent().build();
     }
+    
+    @PostMapping("/{tarefaId}/categorias/{categoriaId}")
+    public ResponseEntity<TarefaResponseDTO> addCategoriaToTarefa(
+             @PathVariable Long tarefaId,
+             @PathVariable Long categoriaId) {
+
+          TarefaResponseDTO response = service.addCategoriaToTarefa(tarefaId, categoriaId);
+          return ResponseEntity.ok(response);
+     }
+
+     @DeleteMapping("/{tarefaId}/categorias/{categoriaId}")
+     public ResponseEntity<TarefaResponseDTO> removeCategoriaFromTarefa(
+             @PathVariable Long tarefaId,
+             @PathVariable Long categoriaId) {
+
+          TarefaResponseDTO response = service.removeCategoriaFromTarefa(tarefaId, categoriaId);
+          return ResponseEntity.ok(response);
+     }
 
     @PostMapping(value = "/{id}/anexos")
     public ResponseEntity<AnexoResponseDTO> uploadfile(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {

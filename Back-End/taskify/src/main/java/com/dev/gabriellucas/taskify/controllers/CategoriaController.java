@@ -1,6 +1,7 @@
 package com.dev.gabriellucas.taskify.controllers;
 
 import com.dev.gabriellucas.taskify.DTO.CategoriaRequestDTO;
+import com.dev.gabriellucas.taskify.DTO.CategoriaRequestPatchDTO;
 import com.dev.gabriellucas.taskify.DTO.CategoriaResponseDTO;
 import com.dev.gabriellucas.taskify.services.impl.CategoriaServiceImpl;
 import jakarta.validation.Valid;
@@ -33,6 +34,18 @@ public class CategoriaController {
      @GetMapping("/{id}")
      public ResponseEntity<CategoriaResponseDTO> findByIdCategoria(@PathVariable Long id) {
           CategoriaResponseDTO responseDTO = service.findByIdCategoria(id);
+          return ResponseEntity.ok(responseDTO);
+     }
+
+     @PutMapping("/{id}")
+     public ResponseEntity<CategoriaResponseDTO> updateCategoria(@PathVariable Long id, @RequestBody @Valid CategoriaRequestDTO requestDTO) {
+          CategoriaResponseDTO responseDTO = service.updateCategoria(id, requestDTO);
+          return ResponseEntity.ok(responseDTO);
+     }
+
+     @PatchMapping("/{id}")
+     public ResponseEntity<CategoriaResponseDTO> updateParcialCategoria(@PathVariable Long id, @RequestBody @Valid CategoriaRequestPatchDTO requestDTO) {
+          CategoriaResponseDTO responseDTO = service.updateParcialCategoria(id, requestDTO);
           return ResponseEntity.ok(responseDTO);
      }
 }

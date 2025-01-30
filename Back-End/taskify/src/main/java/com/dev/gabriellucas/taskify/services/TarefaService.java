@@ -17,4 +17,7 @@ public interface TarefaService {
     void addEtiquetaToTarefa(Long idTarefa, List<EtiquetaInsertRequestDTO> request);
     void removeEtiquetaFromTarefa(Long idTarefa, Long idEtiqueta);
     List<EtiquetaResponseDTO> findAllEtiquetasByTarefaId(Long id);
+    TarefaResponseDTO addCategoriaToTarefa(Long tarefaId, Long categoriaId);
+    TarefaResponseDTO removeCategoriaFromTarefa(Long tarefaId, Long categoriaId);
+
 }

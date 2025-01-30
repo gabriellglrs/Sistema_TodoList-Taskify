@@ -6,8 +6,6 @@ public interface CategoriaService {
      CategoriaResponseDTO saveCategoria(CategoriaRequestDTO requestDTO);
      CategoriaResponseDTO findByIdCategoria(Long id);
      CategoriaResponseDTO updateCategoria(Long id, CategoriaRequestDTO requestDTO);
-     CategoriaResponseDTO updateParcialCategoria(Long id, CategoriaRequestDTO requestDTO);
+     CategoriaResponseDTO updateParcialCategoria(Long id, CategoriaRequestPatchDTO requestDTO);
      void deleteByIdCategoria(Long id);
-     CategoriaResponseDTO addUserToCategoria(Long id, Long userId);
-     CategoriaResponseDTO removeUserFromCategoria(Long id);
 }

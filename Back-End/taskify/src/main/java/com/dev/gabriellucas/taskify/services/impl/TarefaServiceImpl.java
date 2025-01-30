@@ -8,9 +8,11 @@ import com.dev.gabriellucas.taskify.exceptions.ResourceNotFoundException;
 import com.dev.gabriellucas.taskify.mappers.*;
 import com.dev.gabriellucas.taskify.repositories.*;
 import com.dev.gabriellucas.taskify.services.TarefaService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
 public class TarefaServiceImpl implements TarefaService {
 
     private final TarefaRepository repository;
-    private final TarefaMapper mapper;
+    private final TarefaMapper tarefaMapper;
     private final ListaRepository listaRepository;
     private final ComentarioRepository comentarioRepository;
     private final ComentarioMapper comentarioMapper;
@@ -29,13 +31,12 @@ public class TarefaServiceImpl implements TarefaService {
     private final HistoricoMapper historicoMapper;
     private final EtiquetaRepository etiquetaRepository;
     private final EtiquetaMapper etiquetaMapper;
+    private final CategoriaRepository categoriaRepository;
 
-    public TarefaServiceImpl(TarefaRepository repository, TarefaMapper mapper, ListaRepository listaRepository,
-    ComentarioRepository comentarioRepository, ComentarioMapper comentarioMapper, AnexoRepository anexoRepository,
-                             AnexoMapper anexoMapper, HistoricoRepository historicoRepository, HistoricoMapper historicoMapper,
-                             EtiquetaRepository etiquetaRepository, EtiquetaMapper etiquetaMapper) {
+    @Autowired
+    public TarefaServiceImpl(TarefaRepository repository, TarefaMapper tarefaMapper, ListaRepository listaRepository, ComentarioRepository comentarioRepository, ComentarioMapper comentarioMapper, AnexoRepository anexoRepository, AnexoMapper anexoMapper, HistoricoRepository historicoRepository, HistoricoMapper historicoMapper, EtiquetaRepository etiquetaRepository, CategoriaRepository categoriaRepository) {
         this.repository = repository;
-        this.mapper = mapper;
+        this.tarefaMapper = tarefaMapper;
         this.listaRepository = listaRepository;
         this.comentarioRepository = comentarioRepository;
         this.comentarioMapper = comentarioMapper;
@@ -45,6 +46,8 @@ public class TarefaServiceImpl implements TarefaService {
         this.historicoMapper = historicoMapper;
         this.etiquetaRepository = etiquetaRepository;
         this.etiquetaMapper = etiquetaMapper;
+        this.categoriaRepository = categoriaRepository;
+
     }
 
     @Override
@@ -53,9 +56,9 @@ public class TarefaServiceImpl implements TarefaService {
         Lista lista = listaRepository.findById(idLista)
                 .orElseThrow(() -> new ResourceNotFoundException("Lista não encontrada, id:" + idLista));
         checkQuantity(idLista);
-        Tarefa entity = mapper.toEntity(request);
+        Tarefa entity = tarefaMapper.toEntity(request);
         entity.setLista(lista);
-        return mapper.toDto(repository.save(entity));
+        return tarefaMapper.toDto(repository.save(entity));
     }
 
     @Override
@@ -63,7 +66,7 @@ public class TarefaServiceImpl implements TarefaService {
     public TarefaResponseDTO findTarefaById(Long id) {
         Optional<Tarefa> obj = repository.findById(id);
         Tarefa entity = obj.orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id:" + id));
-        return mapper.toDto(entity);
+        return tarefaMapper.toDto(entity);
     }
 
     @Override
@@ -71,8 +74,8 @@ public class TarefaServiceImpl implements TarefaService {
     public TarefaResponseDTO updateTarefa(TarefaRequestDTO request, Long id) {
         Tarefa entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id:" + id));
-        mapper.updateEntityFromDTO(request, entity);
-        return mapper.toDto(repository.save(entity));
+        tarefaMapper.updateEntityFromDTO(request, entity);
+        return tarefaMapper.toDto(repository.save(entity));
     }
 
     @Override
@@ -85,7 +88,7 @@ public class TarefaServiceImpl implements TarefaService {
         if (request.getDataVencimento() != null) entity.setDataVencimento(request.getDataVencimento());
         if (request.getStatus() != null) entity.setStatus(request.getStatus());
         if (request.getPrioridade() != null) entity.setPrioridade(request.getPrioridade());
-        return mapper.toDto(repository.save(entity));
+        return tarefaMapper.toDto(repository.save(entity));
     }
 
     @Override
@@ -94,7 +97,7 @@ public class TarefaServiceImpl implements TarefaService {
         Tarefa entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id:" + id));
         entity.setStatus(StatusTarefa.CONCLUIDA);
-        return mapper.toDto(repository.save(entity));
+        return tarefaMapper.toDto(repository.save(entity));
     }
 
     @Override
@@ -125,6 +128,7 @@ public class TarefaServiceImpl implements TarefaService {
     }
 
     @Override
+    @Transactional
     public void addEtiquetaToTarefa(Long idTarefa, List<EtiquetaInsertRequestDTO> request) {
         Tarefa entity = repository.findById(idTarefa)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id:" + idTarefa));
@@ -156,6 +160,7 @@ public class TarefaServiceImpl implements TarefaService {
     }
 
     @Override
+    @Transactional
     public void removeEtiquetaFromTarefa(Long idTarefa, Long idEtiqueta) {
         Tarefa entity = repository.findById(idTarefa)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id: " + idTarefa));
@@ -178,6 +183,42 @@ public class TarefaServiceImpl implements TarefaService {
         return etiquetas.stream()
                 .map(etiquetaMapper::toDto)
                 .collect(Collectors.toList());
+
+    @Transactional
+    public TarefaResponseDTO addCategoriaToTarefa(Long tarefaId, Long categoriaId) {
+        Tarefa tarefa = repository.findById(tarefaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id: " + tarefaId));
+
+        Categoria categoria = categoriaRepository.findById(categoriaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada, id: " + categoriaId));
+
+        if (tarefa.getCategorias() == null) {
+            tarefa.setCategorias(new HashSet<>()); // Inicializa caso esteja nulo
+        }
+
+        tarefa.getCategorias().add(categoria);
+
+
+        return tarefaMapper.toDto(repository.save(tarefa));
+    }
+
+    @Override
+    @Transactional
+    public TarefaResponseDTO removeCategoriaFromTarefa(Long tarefaId, Long categoriaId) {
+        Tarefa tarefa = repository.findById(tarefaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id: " + tarefaId));
+
+        Categoria categoria = categoriaRepository.findById(categoriaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada, id: " + categoriaId));
+
+        // Verifica se a tarefa possui categorias associadas
+        if (tarefa.getCategorias() != null && tarefa.getCategorias().contains(categoria)) {
+            tarefa.getCategorias().remove(categoria); // Remove a categoria da tarefa
+        } else {
+            throw new ResourceNotFoundException("A tarefa não contém essa categoria.");
+        }
+
+        return tarefaMapper.toDto(repository.save(tarefa));
     }
 
     protected void checkQuantity(Long id){
@@ -186,6 +227,5 @@ public class TarefaServiceImpl implements TarefaService {
             throw new BusinessException("Limite de 1000 tarefas por lista atingido para a lista com ID: " + id);
         }
     }
-
 
 }
