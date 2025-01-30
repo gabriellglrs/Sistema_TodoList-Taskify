@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -87,6 +88,22 @@ public class GlobalExceptionHandler {
                   .path(httpServletRequest.getRequestURI())
                   .build();
           return ResponseEntity.status(erroResponseDTO.getStatus()).body(erroResponseDTO.toString());
+     }
+
+     @ExceptionHandler(MaxUploadSizeExceededException.class)
+     public ResponseEntity<ErroResponseDTO> handleMaxUploadSizeExceededException(
+             MaxUploadSizeExceededException exception, HttpServletRequest request) {
+
+          ErroResponseDTO erroResponseDTO = ErroResponseDTO.builder()
+                  .timestamp(LocalDateTime.now())
+                  .status(HttpStatus.PAYLOAD_TOO_LARGE.value())
+                  .code(HttpStatus.PAYLOAD_TOO_LARGE.name())
+                  .message("Tamanho máximo de 10MB excedido, tente novamente com um arquivo menor.")
+                  .details("O arquivo enviado excede o limite permitido.")
+                  .path(request.getRequestURI())
+                  .build();
+
+          return ResponseEntity.status(erroResponseDTO.getStatus()).body(erroResponseDTO);
      }
 
 }

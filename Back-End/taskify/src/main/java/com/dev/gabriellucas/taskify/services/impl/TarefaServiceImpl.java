@@ -5,10 +5,7 @@ import com.dev.gabriellucas.taskify.entities.*;
 import com.dev.gabriellucas.taskify.enums.StatusTarefa;
 import com.dev.gabriellucas.taskify.exceptions.BusinessException;
 import com.dev.gabriellucas.taskify.exceptions.ResourceNotFoundException;
-import com.dev.gabriellucas.taskify.mappers.AnexoMapper;
-import com.dev.gabriellucas.taskify.mappers.ComentarioMapper;
-import com.dev.gabriellucas.taskify.mappers.HistoricoMapper;
-import com.dev.gabriellucas.taskify.mappers.TarefaMapper;
+import com.dev.gabriellucas.taskify.mappers.*;
 import com.dev.gabriellucas.taskify.repositories.*;
 import com.dev.gabriellucas.taskify.services.TarefaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +30,7 @@ public class TarefaServiceImpl implements TarefaService {
     private final HistoricoRepository historicoRepository;
     private final HistoricoMapper historicoMapper;
     private final EtiquetaRepository etiquetaRepository;
+    private final EtiquetaMapper etiquetaMapper;
     private final CategoriaRepository categoriaRepository;
 
     @Autowired
@@ -47,7 +45,9 @@ public class TarefaServiceImpl implements TarefaService {
         this.historicoRepository = historicoRepository;
         this.historicoMapper = historicoMapper;
         this.etiquetaRepository = etiquetaRepository;
+        this.etiquetaMapper = etiquetaMapper;
         this.categoriaRepository = categoriaRepository;
+
     }
 
     @Override
@@ -178,6 +178,12 @@ public class TarefaServiceImpl implements TarefaService {
     }
 
     @Override
+    public List<EtiquetaResponseDTO> findAllEtiquetasByTarefaId(Long id) {
+        List<Etiqueta> etiquetas = etiquetaRepository.findAllByTarefasId(id);
+        return etiquetas.stream()
+                .map(etiquetaMapper::toDto)
+                .collect(Collectors.toList());
+
     @Transactional
     public TarefaResponseDTO addCategoriaToTarefa(Long tarefaId, Long categoriaId) {
         Tarefa tarefa = repository.findById(tarefaId)
