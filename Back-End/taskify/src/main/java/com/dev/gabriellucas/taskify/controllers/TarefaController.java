@@ -115,4 +115,10 @@ public class TarefaController {
         return ResponseEntity.ok(responseDTO);
     }
 
+    @GetMapping(value = "/{id}/etiquetas")
+    public ResponseEntity<List<EtiquetaResponseDTO>> findAllEtiquetasByTarefaId(@PathVariable Long id) {
+        List<EtiquetaResponseDTO> etiquetaResponseDTO = service.findAllEtiquetasByTarefaId(id);
+        return ResponseEntity.ok().body(etiquetaResponseDTO);
+    }
+
 }
