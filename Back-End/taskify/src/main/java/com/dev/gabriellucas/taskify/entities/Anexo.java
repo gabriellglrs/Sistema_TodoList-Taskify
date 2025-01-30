@@ -18,6 +18,9 @@ public class Anexo {
      private Long tamanho;
      private String url;
 
+     @Lob
+     private byte[] dados;
+
      @ManyToOne
      @JoinColumn(name = "tarefa_id", nullable = false)
      private Tarefa tarefa;

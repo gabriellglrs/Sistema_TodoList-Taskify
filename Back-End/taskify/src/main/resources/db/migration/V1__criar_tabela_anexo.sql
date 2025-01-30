@@ -5,5 +5,6 @@ CREATE TABLE tb_anexo (
     nome      VARCHAR(255),
     tipo      VARCHAR(255),
     url       VARCHAR(255),
+    dados     MEDIUMBLOB,
     PRIMARY KEY (id)
 ) ENGINE = InnoDB;

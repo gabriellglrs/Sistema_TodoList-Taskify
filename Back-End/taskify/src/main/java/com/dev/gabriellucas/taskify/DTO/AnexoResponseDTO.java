@@ -1,12 +1,12 @@
 package com.dev.gabriellucas.taskify.DTO;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class AnexoResponseDTO {
 
     private Long id;

@@ -1,22 +1,28 @@
 package com.dev.gabriellucas.taskify.controllers;
 
 import com.dev.gabriellucas.taskify.DTO.*;
+import com.dev.gabriellucas.taskify.entities.Anexo;
+import com.dev.gabriellucas.taskify.services.AnexoService;
 import com.dev.gabriellucas.taskify.services.TarefaService;
 import com.dev.gabriellucas.taskify.services.impl.TarefaServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/tarefas")
 public class TarefaController {
     private final TarefaService service;
+    private final AnexoService anexoService;
 
-    public TarefaController(TarefaService service) {
+    public TarefaController(TarefaService service, AnexoService anexoService) {
         this.service = service;
+        this.anexoService = anexoService;
     }
 
     @PostMapping(value = "/{idLista}")
@@ -88,4 +94,25 @@ public class TarefaController {
         service.removeEtiquetaFromTarefa(idTarefa, idEtiqueta);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping(value = "/{id}/anexos")
+    public ResponseEntity<AnexoResponseDTO> uploadfile(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
+        Anexo attachment = null;
+        String downloadUrl = "";
+        attachment = anexoService.saveAnexo(file, id);
+        downloadUrl = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/download/")
+                .path(attachment.getId().toString())
+                .toUriString();
+        AnexoResponseDTO responseDTO = AnexoResponseDTO.builder()
+                .id(attachment.getId())
+                .nome(attachment.getNome())
+                .tipo(attachment.getTipo())
+                .tamanho(attachment.getTamanho())
+                .url(downloadUrl)
+                .build();
+        return ResponseEntity.ok(responseDTO);
+    }
+
 }
