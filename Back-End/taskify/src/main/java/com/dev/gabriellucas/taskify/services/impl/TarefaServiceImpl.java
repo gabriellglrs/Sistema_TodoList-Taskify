@@ -34,7 +34,7 @@ public class TarefaServiceImpl implements TarefaService {
     private final CategoriaRepository categoriaRepository;
 
     @Autowired
-    public TarefaServiceImpl(TarefaRepository repository, TarefaMapper tarefaMapper, ListaRepository listaRepository, ComentarioRepository comentarioRepository, ComentarioMapper comentarioMapper, AnexoRepository anexoRepository, AnexoMapper anexoMapper, HistoricoRepository historicoRepository, HistoricoMapper historicoMapper, EtiquetaRepository etiquetaRepository, CategoriaRepository categoriaRepository) {
+    public TarefaServiceImpl(TarefaRepository repository, TarefaMapper tarefaMapper, ListaRepository listaRepository, ComentarioRepository comentarioRepository, ComentarioMapper comentarioMapper, AnexoRepository anexoRepository, AnexoMapper anexoMapper, HistoricoRepository historicoRepository, HistoricoMapper historicoMapper, EtiquetaRepository etiquetaRepository, CategoriaRepository categoriaRepository, EtiquetaMapper etiquetaMapper) {
         this.repository = repository;
         this.tarefaMapper = tarefaMapper;
         this.listaRepository = listaRepository;
@@ -183,6 +183,7 @@ public class TarefaServiceImpl implements TarefaService {
         return etiquetas.stream()
                 .map(etiquetaMapper::toDto)
                 .collect(Collectors.toList());
+    }
 
     @Transactional
     public TarefaResponseDTO addCategoriaToTarefa(Long tarefaId, Long categoriaId) {
