@@ -1,7 +1,5 @@
 package com.dev.gabriellucas.taskify.DTO;
 
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

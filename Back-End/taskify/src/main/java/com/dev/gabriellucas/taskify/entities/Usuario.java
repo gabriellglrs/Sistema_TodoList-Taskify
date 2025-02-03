@@ -1,11 +1,11 @@
 package com.dev.gabriellucas.taskify.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -27,5 +27,4 @@ public class Usuario {
 
      @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
      private Set<Notificacao> notificacoes= new HashSet<>();
-
 }
