@@ -1,10 +1,31 @@
+version: '3.8'
+
 services:
   mysql:
     image: 'mysql:latest'
+    container_name: mysql_container
+    restart: always
     environment:
-      - 'MYSQL_DATABASE=taskfy'
-      - 'MYSQL_PASSWORD=taskfy'
-      - 'MYSQL_ROOT_PASSWORD=taskfy'
-      - 'MYSQL_USER=taskfy'
+      MYSQL_DATABASE: taskfy
+      MYSQL_USER: taskfy
+      MYSQL_PASSWORD: taskfy
+      MYSQL_ROOT_PASSWORD: taskfy
     ports:
       - '3360:3306'
+    networks:
+      - taskfy_network
+
+  redis:
+    image: 'redis:latest'
+    container_name: redis_container
+    restart: always
+    ports:
+      - '6379:6379'
+    networks:
+      - taskfy_network
+    command: ["redis-server", "--appendonly", "yes"]
+
+networks:
+  taskfy_network:
+    driver: bridge
+

@@ -1,19 +1,18 @@
 package com.dev.gabriellucas.taskify.services.impl;
 
 import com.dev.gabriellucas.taskify.DTO.*;
+import com.dev.gabriellucas.taskify.entities.Usuario;
 import com.dev.gabriellucas.taskify.exceptions.DatabaseException;
+import com.dev.gabriellucas.taskify.exceptions.ResourceNotFoundException;
 import com.dev.gabriellucas.taskify.mappers.ListaMapper;
 import com.dev.gabriellucas.taskify.mappers.NotificacaoMapper;
 import com.dev.gabriellucas.taskify.mappers.UsuarioMapper;
-import com.dev.gabriellucas.taskify.entities.Usuario;
-import com.dev.gabriellucas.taskify.exceptions.ResourceNotFoundException;
 import com.dev.gabriellucas.taskify.repositories.ListaRepository;
 import com.dev.gabriellucas.taskify.repositories.NotificacaoRepository;
 import com.dev.gabriellucas.taskify.repositories.UsuarioRepository;
 import com.dev.gabriellucas.taskify.services.UsuarioService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
