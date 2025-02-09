@@ -11,6 +11,9 @@ import com.dev.gabriellucas.taskify.repositories.ListaRepository;
 import com.dev.gabriellucas.taskify.repositories.NotificacaoRepository;
 import com.dev.gabriellucas.taskify.repositories.UsuarioRepository;
 import com.dev.gabriellucas.taskify.services.UsuarioService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,15 +41,16 @@ public class UsuarioServiceImpl implements UsuarioService {
 
      @Override
      @Transactional
+     @CachePut(value = "usuarios", key = "#result.id")
      public UsuarioResponseDTO saveUsuario(UsuarioRequestDTO requestDTO) {
           Usuario usuario = usuarioMapper.toEntity(requestDTO);
-          Usuario sevedUsuario = usuarioRepository.save(usuario);
-          return usuarioMapper.toDTO(sevedUsuario);
-
+          Usuario savedUsuario = usuarioRepository.save(usuario);
+          return usuarioMapper.toDTO(savedUsuario);
      }
 
      @Override
      @Transactional(readOnly = true)
+     @Cacheable(value = "usuarios", key = "#id")
      public UsuarioResponseDTO findByIdUsuario(Long id) {
           Usuario usuario = usuarioRepository.findById(id)
                   .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado, id: " + id));
@@ -55,16 +59,18 @@ public class UsuarioServiceImpl implements UsuarioService {
 
      @Override
      @Transactional
+     @CachePut(value = "usuarios", key = "#result.id")
      public UsuarioResponseDTO updateUsuario(Long id, UsuarioRequestDTO requestDTO) {
           Usuario usuario = usuarioRepository.findById(id)
                   .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado, id: " + id));
           usuarioMapper.updateEntityFromDTO(requestDTO, usuario);
-          Usuario updateUsuario = usuarioRepository.save(usuario);
-          return usuarioMapper.toDTO(updateUsuario);
+          Usuario updatedUsuario = usuarioRepository.save(usuario);
+          return usuarioMapper.toDTO(updatedUsuario);
      }
 
      @Override
      @Transactional
+     @CachePut(value = "usuarios", key = "#result.id")
      public UsuarioResponseDTO updateParcialUsuario(Long id, UsuarioRequestPatchDTO requestDTO) {
           Usuario usuario = usuarioRepository.findById(id)
                   .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado, id: " + id));
@@ -73,23 +79,20 @@ public class UsuarioServiceImpl implements UsuarioService {
           if (requestDTO.getEmail() != null) usuario.setEmail(requestDTO.getEmail());
           if (requestDTO.getSenha() != null) usuario.setSenha(requestDTO.getSenha());
           if (requestDTO.getDataCadastro() != null) usuario.setDataCadastro(requestDTO.getDataCadastro());
-
           usuario = usuarioRepository.save(usuario);
-
           return usuarioMapper.toDTO(usuario);
      }
 
      @Override
-     @Transactional()
+     @Transactional
+     @CacheEvict(value = "usuarios", key = "#id")
      public void deleteByIdUsuario(Long id) {
           if (!usuarioRepository.existsById(id)) {
                throw new ResourceNotFoundException("Usuário não encontrado, id: " + id);
           }
           try {
-               // Exclui o produto do banco de dados
                usuarioRepository.deleteById(id);
           } catch (DataIntegrityViolationException e) {
-               // Lança uma exceção se houver violação de integridade (ex: FK)
                throw new DatabaseException("Violação de integridade");
           }
      }

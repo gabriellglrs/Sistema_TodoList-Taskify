@@ -3,6 +3,7 @@ package com.dev.gabriellucas.taskify.DTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 @Setter
-public class ErroResponseDTO {
+public class ErroResponseDTO implements Serializable {
 
      @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss", timezone = "America/Sao_Paulo")
      private LocalDateTime timestamp;

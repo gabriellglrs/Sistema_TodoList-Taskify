@@ -5,12 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter
 @Setter
-public class UsuarioResponseDTO {
+public class UsuarioResponseDTO implements Serializable {
      private Long id;
      private String nome;
      private String email;
