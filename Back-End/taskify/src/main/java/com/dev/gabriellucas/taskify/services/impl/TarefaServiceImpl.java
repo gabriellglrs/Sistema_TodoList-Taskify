@@ -9,6 +9,9 @@ import com.dev.gabriellucas.taskify.mappers.*;
 import com.dev.gabriellucas.taskify.repositories.*;
 import com.dev.gabriellucas.taskify.services.TarefaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +55,8 @@ public class TarefaServiceImpl implements TarefaService {
 
     @Override
     @Transactional
+    @CachePut(value = "tarefas", key = "#idLista")
+    @CacheEvict(value = "listaTarefas", key = "#idLista")
     public TarefaResponseDTO saveTarefa(TarefaRequestDTO request, Long idLista) {
         Lista lista = listaRepository.findById(idLista)
                 .orElseThrow(() -> new ResourceNotFoundException("Lista não encontrada, id:" + idLista));
@@ -63,6 +68,7 @@ public class TarefaServiceImpl implements TarefaService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "tarefas", key = "#id")
     public TarefaResponseDTO findTarefaById(Long id) {
         Optional<Tarefa> obj = repository.findById(id);
         Tarefa entity = obj.orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id:" + id));
@@ -71,6 +77,7 @@ public class TarefaServiceImpl implements TarefaService {
 
     @Override
     @Transactional
+    @CachePut(value = "tarefas", key = "#id")
     public TarefaResponseDTO updateTarefa(TarefaRequestDTO request, Long id) {
         Tarefa entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id:" + id));
@@ -80,6 +87,7 @@ public class TarefaServiceImpl implements TarefaService {
 
     @Override
     @Transactional
+    @CachePut(value = "tarefas", key = "#id")
     public TarefaResponseDTO updateTarefaParcial(TarefaRequestPatchDTO request, Long id) {
         Tarefa entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id:" + id));
@@ -93,6 +101,7 @@ public class TarefaServiceImpl implements TarefaService {
 
     @Override
     @Transactional
+    @CachePut(value = "tarefas", key = "#id")
     public TarefaResponseDTO completeTarefa(Long id) {
         Tarefa entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id:" + id));
@@ -102,6 +111,7 @@ public class TarefaServiceImpl implements TarefaService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "comentarios", key = "#id")
     public List<ComentarioResponseDTO> findAllCommentsByTarefaId(Long id) {
         List<Comentario> comentarios = comentarioRepository.findAllByTarefaId(id);
         return comentarios.stream()
@@ -111,6 +121,7 @@ public class TarefaServiceImpl implements TarefaService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "anexos", key = "#id")
     public List<AnexoResponseDTO> findAllAnexosByTarefaId(Long id) {
         List<Anexo> anexos = anexoRepository.findAllByTarefaId(id);
         return anexos.stream()
@@ -120,6 +131,7 @@ public class TarefaServiceImpl implements TarefaService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "historicos", key = "#id")
     public List<HistoricoResponseDTO> findAllHistoricosByTarefaId(Long id) {
         List<Historico> historicos = historicoRepository.findAllByTarefaId(id);
         return historicos.stream()
@@ -129,6 +141,7 @@ public class TarefaServiceImpl implements TarefaService {
 
     @Override
     @Transactional
+    @CachePut(value = "tarefas", key = "#idTarefa")
     public void addEtiquetaToTarefa(Long idTarefa, List<EtiquetaInsertRequestDTO> request) {
         Tarefa entity = repository.findById(idTarefa)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id:" + idTarefa));
@@ -161,6 +174,8 @@ public class TarefaServiceImpl implements TarefaService {
 
     @Override
     @Transactional
+    @CachePut(value = "tarefas", key = "#idTarefa") // Atualiza o cache da tarefa
+    @CacheEvict(value = "etiquetas", key = "#idTarefa") // Limpa o cache das etiquetas
     public void removeEtiquetaFromTarefa(Long idTarefa, Long idEtiqueta) {
         Tarefa entity = repository.findById(idTarefa)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id: " + idTarefa));
@@ -178,6 +193,7 @@ public class TarefaServiceImpl implements TarefaService {
     }
 
     @Override
+    @Cacheable(value = "etiquetas", key = "#id") // Adicione esta linha
     public List<EtiquetaResponseDTO> findAllEtiquetasByTarefaId(Long id) {
         List<Etiqueta> etiquetas = etiquetaRepository.findAllByTarefasId(id);
         return etiquetas.stream()
@@ -186,6 +202,7 @@ public class TarefaServiceImpl implements TarefaService {
     }
 
     @Transactional
+    @CachePut(value = "tarefas", key = "#tarefaId")
     public TarefaResponseDTO addCategoriaToTarefa(Long tarefaId, Long categoriaId) {
         Tarefa tarefa = repository.findById(tarefaId)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id: " + tarefaId));
@@ -205,6 +222,8 @@ public class TarefaServiceImpl implements TarefaService {
 
     @Override
     @Transactional
+    @CachePut(value = "tarefas", key = "#tarefaId")
+    @CacheEvict(value = "categoria", key = "#categoriaId")
     public TarefaResponseDTO removeCategoriaFromTarefa(Long tarefaId, Long categoriaId) {
         Tarefa tarefa = repository.findById(tarefaId)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada, id: " + tarefaId));
