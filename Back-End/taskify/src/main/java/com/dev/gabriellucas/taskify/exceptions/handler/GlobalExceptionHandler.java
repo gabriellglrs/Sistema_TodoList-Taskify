@@ -7,13 +7,17 @@ import com.dev.gabriellucas.taskify.DTO.ErroResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -104,6 +108,60 @@ public class GlobalExceptionHandler {
                   .build();
 
           return ResponseEntity.status(erroResponseDTO.getStatus()).body(erroResponseDTO);
+     }
+
+     @ExceptionHandler(AccessDeniedException.class)
+     public ResponseEntity<ErroResponseDTO> accessDeniedException(
+             AccessDeniedException exception, HttpServletRequest request) {
+
+          ErroResponseDTO erroResponseDTO = ErroResponseDTO.builder()
+                  .timestamp(LocalDateTime.now())
+                  .status(HttpStatus.FORBIDDEN.value())
+                  .code(exception.getMessage())
+                  .message("Acesso negado! Você não tem permissão para esta ação.")
+                  .details("Seu usuário não possui privilégios suficientes para acessar este recurso. Caso necessite, entre em contato com o administrador do sistema.")
+                  .path(request.getRequestURI())
+                  .build();
+
+          return ResponseEntity.status(erroResponseDTO.getStatus()).body(erroResponseDTO);
+     }
+
+     @ExceptionHandler(AuthenticationException.class)
+     public ResponseEntity<ErroResponseDTO> authenticationException(
+             AuthenticationException exception,
+             HttpServletRequest request) {
+
+          ErroResponseDTO erroResponseDTO = ErroResponseDTO.builder()
+                  .timestamp(LocalDateTime.now())
+                  .status(HttpStatus.UNAUTHORIZED.value())
+                  .code(HttpStatus.UNAUTHORIZED.name())
+                  .message("Não autorizado! Autenticação é necessária para acessar este recurso.")
+                  .details("Sua sessão pode ter expirado ou você não forneceu credenciais válidas. " +
+                           "Por favor, faça login novamente.")
+                  .path(request.getRequestURI())
+                  .build();
+
+          return ResponseEntity.status(erroResponseDTO.getStatus())
+                  .body(erroResponseDTO);
+     }
+
+     @ExceptionHandler(BadCredentialsException.class)
+     public ResponseEntity<ErroResponseDTO> badCredentialsException(
+             BadCredentialsException exception,
+             HttpServletRequest request) {
+
+          ErroResponseDTO erroResponseDTO = ErroResponseDTO.builder()
+                  .timestamp(LocalDateTime.now())
+                  .status(HttpStatus.UNAUTHORIZED.value())
+                  .code(HttpStatus.UNAUTHORIZED.name())
+                  .message("Credenciais inválidas! Usuário ou senha incorretos.")
+                  .details("As credenciais fornecidas são inválidas. Verifique seu usuário e senha " +
+                           "e tente novamente.")
+                  .path(request.getRequestURI())
+                  .build();
+
+          return ResponseEntity.status(erroResponseDTO.getStatus())
+                  .body(erroResponseDTO);
      }
 
 }

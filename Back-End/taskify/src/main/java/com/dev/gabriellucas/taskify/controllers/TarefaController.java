@@ -7,6 +7,7 @@ import com.dev.gabriellucas.taskify.services.TarefaService;
 import com.dev.gabriellucas.taskify.services.impl.TarefaServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -39,6 +40,7 @@ public class TarefaController {
     }
 
     @GetMapping(value = "/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<TarefaResponseDTO> findTarefaById(@PathVariable Long id) {
         TarefaResponseDTO responseDTO = service.findTarefaById(id);
         return ResponseEntity.ok().body(responseDTO);

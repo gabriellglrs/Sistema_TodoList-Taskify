@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -29,7 +30,8 @@ public class UsuarioController {
              @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
              @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Dados inválidos")
      })
-     @PostMapping
+     @PostMapping("/register")
+     @PreAuthorize("hasAnyRole('USER')")
      public ResponseEntity<UsuarioResponseDTO> save(@Valid @RequestBody UsuarioRequestDTO requestDTO) {
           UsuarioResponseDTO responseDTO = usuarioService.saveUsuario(requestDTO);
           return ResponseEntity
@@ -46,7 +48,9 @@ public class UsuarioController {
              @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Usuário encontrado"),
              @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Usuário não encontrado")
      })
+
      @GetMapping("/{id}")
+     @PreAuthorize("hasAnyAuthority('USER')")
      public ResponseEntity<UsuarioResponseDTO> findById(@PathVariable Long id) {
           UsuarioResponseDTO responseDTO = usuarioService.findByIdUsuario(id);
           return ResponseEntity.ok(responseDTO);
