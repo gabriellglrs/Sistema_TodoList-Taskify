@@ -1,4 +1,4 @@
-package com.dev.gabriellucas.taskify.configs;
+package com.dev.gabriellucas.taskify.configs.swagger;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
