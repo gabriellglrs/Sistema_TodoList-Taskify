@@ -17,7 +17,6 @@ public class UsuarioRequestDTOProvider {
           usuario.setNome(NOME);
           usuario.setEmail(EMAIL);
           usuario.setSenha(SENHA);
-          usuario.setDataCadastro(DATA_CADASTRO);
           return usuario;
      }
 }

@@ -67,7 +67,7 @@ class UsuarioProviderServiceImplTest {
           requestDTOProvider = new UsuarioRequestDTOProvider();
           responseDTOProvider = new UsuarioResponseDTOProvider();
           requestPatchDTOProvider = new UsuarioRequestPatchDTOProvider();
-          usuarioService = new UsuarioServiceImpl(usuarioRepository, listaRepository, notificacaoRepository, usuarioMapper, listaMapper, notificacaoMapper);
+          usuarioService = new UsuarioServiceImpl(usuarioRepository, listaRepository, notificacaoRepository, usuarioMapper, listaMapper, notificacaoMapper, null);
      }
 
      @DisplayName("Teste de criação de usuário")

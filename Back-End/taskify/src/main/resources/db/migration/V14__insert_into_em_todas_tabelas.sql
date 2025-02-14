@@ -1,10 +1,10 @@
 -- Inserindo usuários
 INSERT INTO tb_usuario (data_cadastro, email, nome, senha) VALUES
-                                                               ('2024-01-22 10:00:00', 'joao@email.com', 'João Silva', 'senha123'),
-                                                               ('2024-01-22 10:30:00', 'maria@email.com', 'Maria Santos', 'senha456'),
-                                                               ('2024-01-22 11:00:00', 'pedro@email.com', 'Pedro Oliveira', 'senha789'),
-                                                               ('2024-01-22 11:30:00', 'ana@email.com', 'Ana Souza', 'senha321'),
-                                                               ('2024-01-22 12:00:00', 'lucas@email.com', 'Lucas Pereira', 'senha654');
+                                                               ('2024-01-22 10:00:00', 'fracisco23dds@email.com', 'fracisco', '2334'),
+                                                               ('2024-01-22 10:30:00', 'izabel23e@email.com', 'Izabel maria', 'qqsdcef'),
+                                                               ('2024-01-22 11:00:00', 'rodrigo34@email.com', 'rodrigo Oliveira', '4frffc'),
+                                                               ('2024-01-22 11:30:00', 'anaclara342@email.com', 'Ana clara', '45fef'),
+                                                               ('2024-01-22 12:00:00', 'lucasmontano11@email.com', 'Lucas montano', 'sdvsdw');
 
 -- Inserindo categorias
 INSERT INTO tb_categoria (cor, descricao, nome) VALUES

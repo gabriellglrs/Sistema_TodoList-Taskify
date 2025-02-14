@@ -1,5 +1,6 @@
 package com.dev.gabriellucas.taskify.DTO;
 
+import com.dev.gabriellucas.taskify.entities.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -7,12 +8,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
 @Setter
-public class UsuarioRequestPatchDTO {
+public class UsuarioRequestPatchDTO implements Serializable {
      private Long id; // ID pode ser nulo em operações de PATCH, se necessário
 
      @Size(min = 3, max = 100, message = "Nome deve ter entre 3 e 100 caracteres")
@@ -30,5 +35,7 @@ public class UsuarioRequestPatchDTO {
      private String senha;
 
      private LocalDateTime dataCadastro; // Pode ser nulo para evitar alterações desnecessárias
+
+     private Set<RoleResponseDTO> roles;
 
 }

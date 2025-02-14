@@ -1,5 +1,6 @@
 package com.dev.gabriellucas.taskify.DTO;
 
+import com.dev.gabriellucas.taskify.entities.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -8,12 +9,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
 @Setter
-public class UsuarioRequestDTO {
+public class UsuarioRequestDTO implements Serializable {
      private Long id;
 
      @NotEmpty(message = "Nome não pode ser vazio")
@@ -33,5 +38,5 @@ public class UsuarioRequestDTO {
      @Pattern(regexp = "(?=.*[!@#$%^&*()_+\\-=\\[\\] {};':\"\\\\|,.<>\\/?]).+", message = "Senha deve conter pelo menos um caractere especial")
      private String senha;
 
-     private LocalDateTime dataCadastro = LocalDateTime.now();
+     private Set<RoleResponseDTO> roles;
 }
