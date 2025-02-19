@@ -15,7 +15,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +45,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
      @Override
      @Transactional
+     @CachePut(value = "usuarios", key = "#result.id")
      public UsuarioResponseDTO saveUsuario(UsuarioRequestDTO requestDTO) {
           Usuario usuario = usuarioMapper.toEntity(requestDTO);
           usuario.setSenha(password.encode(usuario.getSenha())); // criptografa a senha
@@ -122,7 +122,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 
      @Transactional
      public Usuario findByEmail(String email) {
-          return usuarioRepository.findByEmailWithRoles(email)
-                  .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado, email: " + email));
+          return usuarioRepository.findByEmailWithRoles(email).orElse(null);
+     }
+
+     @Transactional
+     public Usuario saveEntity(Usuario usuario) {
+          return usuarioRepository.save(usuario);
      }
 }

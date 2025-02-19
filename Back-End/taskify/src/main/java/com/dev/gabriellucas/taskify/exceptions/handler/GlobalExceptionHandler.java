@@ -117,7 +117,7 @@ public class GlobalExceptionHandler {
           ErroResponseDTO erroResponseDTO = ErroResponseDTO.builder()
                   .timestamp(LocalDateTime.now())
                   .status(HttpStatus.FORBIDDEN.value())
-                  .code(exception.getMessage())
+                  .code(HttpStatus.FORBIDDEN.name())
                   .message("Acesso negado! Você não tem permissão para esta ação.")
                   .details("Seu usuário não possui privilégios suficientes para acessar este recurso. Caso necessite, entre em contato com o administrador do sistema.")
                   .path(request.getRequestURI())
@@ -145,16 +145,16 @@ public class GlobalExceptionHandler {
                   .body(erroResponseDTO);
      }
 
-     @ExceptionHandler(BadCredentialsException.class)
+     @ExceptionHandler(UsernameNotFoundException.class)
      public ResponseEntity<ErroResponseDTO> badCredentialsException(
-             BadCredentialsException exception,
+             UsernameNotFoundException exception,
              HttpServletRequest request) {
 
           ErroResponseDTO erroResponseDTO = ErroResponseDTO.builder()
                   .timestamp(LocalDateTime.now())
                   .status(HttpStatus.UNAUTHORIZED.value())
                   .code(HttpStatus.UNAUTHORIZED.name())
-                  .message("Credenciais inválidas! Usuário ou senha incorretos.")
+                  .message(exception.getMessage())
                   .details("As credenciais fornecidas são inválidas. Verifique seu usuário e senha " +
                            "e tente novamente.")
                   .path(request.getRequestURI())

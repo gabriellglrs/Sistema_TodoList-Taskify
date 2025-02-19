@@ -26,7 +26,7 @@ public class AnexoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resource> download(@PathVariable Long id) throws Exception {
+    public ResponseEntity<Resource> download(@PathVariable Long id)  {
         Anexo fileUpload = service.getAnexoById(id);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(fileUpload.getTipo()))
