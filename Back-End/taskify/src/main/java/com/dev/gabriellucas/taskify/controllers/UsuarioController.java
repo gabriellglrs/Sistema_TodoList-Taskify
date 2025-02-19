@@ -31,14 +31,14 @@ public class UsuarioController {
              @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Dados inválidos")
      })
      @PostMapping("/register")
-     @PreAuthorize("hasAnyRole('USER')")
+     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
      public ResponseEntity<UsuarioResponseDTO> save(@Valid @RequestBody UsuarioRequestDTO requestDTO) {
           UsuarioResponseDTO responseDTO = usuarioService.saveUsuario(requestDTO);
           return ResponseEntity
                   .created(ServletUriComponentsBuilder
                           .fromCurrentRequest() // Pega a URI atual
                           .path("/{id}") // Adiciona o ID do novo produto à URI
-                          .buildAndExpand(responseDTO) // Expande o {id} com o ID real
+                          .buildAndExpand(responseDTO.getId()) // Expande o {id} com o ID real
                           .toUri()) // Constrói a URI completa
                   .body(responseDTO);
      }
@@ -50,7 +50,7 @@ public class UsuarioController {
      })
 
      @GetMapping("/{id}")
-     @PreAuthorize("hasAnyAuthority('USER')")
+     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
      public ResponseEntity<UsuarioResponseDTO> findById(@PathVariable Long id) {
           UsuarioResponseDTO responseDTO = usuarioService.findByIdUsuario(id);
           return ResponseEntity.ok(responseDTO);

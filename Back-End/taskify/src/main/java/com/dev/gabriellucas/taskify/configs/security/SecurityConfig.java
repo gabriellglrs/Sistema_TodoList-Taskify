@@ -1,6 +1,5 @@
 package com.dev.gabriellucas.taskify.configs.security;
 
-import com.dev.gabriellucas.taskify.repositories.RoleRepository;
 import com.dev.gabriellucas.taskify.services.impl.UsuarioServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,8 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -29,15 +29,12 @@ public class SecurityConfig {
                   .csrf(AbstractHttpConfigurer::disable) // Desativa proteção CSRF (para APIs REST)
                   .formLogin(Customizer.withDefaults()) // Define autenticação via formulário
                   .httpBasic(Customizer.withDefaults()) // Define autenticação básica
-                  .logout(logout -> logout
-                          .logoutUrl("/auth/logout") // Define a URL de logout
-                          .logoutSuccessHandler((request, response, authentication) -> {
-                               response.sendRedirect("/api/usuarios/1"); // Redireciona para a URL customizada após logout
-                          })
-                          .permitAll()
-                  )
+
                   .oauth2Login(oauth2 -> oauth2
                           .successHandler(successHandler)
+                  )
+                  .oauth2ResourceServer(oauth2 -> oauth2 //
+                          .jwt(Customizer.withDefaults()) // Define autenticação via JWT
                   )
                   .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                           .requestMatchers("/auth/login", "/auth/register").permitAll() // Permite acesso ao login e cadastro
@@ -49,8 +46,13 @@ public class SecurityConfig {
      }
 
      @Bean
-     public PasswordEncoder passwordEncoder() {
-          return new BCryptPasswordEncoder(10);
+     public JwtAuthenticationConverter jwtAuthenticationConverter() { // Converte o token JWT em autenticação
+          var authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+          authoritiesConverter.setAuthorityPrefix("");
+          var converter = new JwtAuthenticationConverter();
+          converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+
+          return converter;
      }
 
      @Bean
@@ -71,5 +73,4 @@ public class SecurityConfig {
      public GrantedAuthorityDefaults grantedAuthorityDefaults() {
           return new GrantedAuthorityDefaults(""); // Remove o prefixo ROLE_
      }
-
 }
