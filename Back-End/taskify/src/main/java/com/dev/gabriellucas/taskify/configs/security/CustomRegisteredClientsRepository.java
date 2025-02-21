@@ -42,8 +42,9 @@ public class CustomRegisteredClientsRepository implements RegisteredClientReposi
                   .redirectUri(client.getRedirectURI()) // URI para onde o provedor de autorização redirecionará o usuário após a conclusão da autorização
                   .scope(client.getScope()) // Escopos que o cliente está autorizado a solicitar
                   .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC) // Método de autenticação do cliente
-                  .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE) // Tipo de concessão de autorização
-                  .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS) // Tipo de concessão de autorização
+                  .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE) // AUTHORIZATION_CODE é um tipo de concessão de autorização que é usado para obter um token de acesso após a autorização do usuário
+                  .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS) // CLIENT_CREDENTIALS é um tipo de concessão de autorização que é usado para obter um token de acesso em nome do cliente
+                  .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN) // REFRESH_TOKEN é um tipo de concessão de autorização que é usado para obter um novo token de acesso usando um token de atualização
                   .tokenSettings(tokenSettings) // Configurações do token de acesso do cliente registrado, classe AuthorizationServerConfiguration
                   .clientSettings(clientSettings) // Configurações do cliente registrado, classe AuthorizationServerConfiguration
                   .build(); // Constrói o cliente registrado

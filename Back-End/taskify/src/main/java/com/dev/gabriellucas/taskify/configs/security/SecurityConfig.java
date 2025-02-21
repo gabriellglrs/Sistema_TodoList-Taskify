@@ -1,21 +1,16 @@
 package com.dev.gabriellucas.taskify.configs.security;
 
-import com.dev.gabriellucas.taskify.services.impl.UsuarioServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -24,7 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
      @Bean
-     public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler successHandler) throws Exception {
+     public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler successHandler, JwtCustomAuthenticationFilter jwtCustomAuthenticationFilter) throws Exception {
           return http
                   .csrf(AbstractHttpConfigurer::disable) // Desativa proteção CSRF (para APIs REST)
                   .formLogin(Customizer.withDefaults()) // Define autenticação via formulário
@@ -42,6 +37,7 @@ public class SecurityConfig {
                           .requestMatchers("/api/usuarios/register").permitAll() // Permite acesso ao Swagger
                           .anyRequest().authenticated() // Exige autenticação para outras rotas
                   )
+                  .addFilterAfter(jwtCustomAuthenticationFilter, BearerTokenAuthenticationFilter.class)
                   .build();
      }
 
@@ -55,18 +51,6 @@ public class SecurityConfig {
           return converter;
      }
 
-     @Bean
-     public UserDetailsService userDetailsService(UsuarioServiceImpl usuarioService) {
-          return new CustomUserDetailsService(usuarioService);
-     }
-
-     @Bean
-     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-          DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-          authProvider.setUserDetailsService(userDetailsService);
-          authProvider.setPasswordEncoder(passwordEncoder); // Compara senhas criptografadas corretamente
-          return new ProviderManager(authProvider);
-     }
 
      // Define o prefixo para as roles
      @Bean

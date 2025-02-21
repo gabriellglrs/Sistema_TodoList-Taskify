@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
@@ -53,6 +54,7 @@ public class AuthorizationServerConfiguration { // Classe de configuração do s
           return TokenSettings.builder()
                   .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED) // Formato do token de acesso do cliente registrado
                   .accessTokenTimeToLive(Duration.ofMinutes(60)) // Tempo de vida do token de acesso do cliente registrado
+                  .refreshTokenTimeToLive(Duration.ofMinutes(90)) // Tempo de vida do token de atualização do token de acesso do cliente registrado (token de atualização é um token que pode ser usado para obter um novo token de acesso)
                   .build(); // Constrói as configurações do token de acesso do cliente registrado
      }
 
@@ -93,5 +95,18 @@ public class AuthorizationServerConfiguration { // Classe de configuração do s
      @Bean
      public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) { // Método que retorna o decodificador de token JWT
           return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
+     }
+
+     @Bean
+     public AuthorizationServerSettings authorizationServerSettings() { // Método que retorna as configurações do servidor de autorização
+          return AuthorizationServerSettings.builder()
+                  .tokenEndpoint("/oauth2/token") // (URI para onde o cliente envia uma solicitação para obter um token de acesso)
+                  .tokenIntrospectionEndpoint("/oauth2/introspect") // para consultar status de um token de acesso
+                  .tokenRevocationEndpoint("/oauth2/revoke") // para revogar um token de acesso ou um token de atualização
+                  .authorizationEndpoint("/oauth2/authorize") // (URI para onde o cliente redireciona o usuário para obter autorização)
+                  .oidcUserInfoEndpoint("/userinfo") // (URI para onde o cliente envia uma solicitação para obter informações do usuário)
+                  .jwkSetEndpoint("/oauth2/keys") // (URI para onde o cliente envia uma solicitação para obter as chaves JWK )
+                  .oidcLogoutEndpoint("/logout") // (URI para onde o cliente redireciona o usuário após o logout)
+                  .build(); // Constrói as configurações do servidor de autorização
      }
 }

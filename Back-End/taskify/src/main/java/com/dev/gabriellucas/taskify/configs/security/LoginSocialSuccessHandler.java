@@ -32,57 +32,52 @@ public class LoginSocialSuccessHandler extends SavedRequestAwareAuthenticationSu
      private final UsuarioServiceImpl usuarioService;
      private final RoleRepository roleRepository;
      private final PasswordEncoder passwordEncoder;
-     private final UserDetailsService userDetailsService;
 
      @Override
      public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                          Authentication authentication) throws ServletException, IOException {
 
-          if (response.isCommitted()) {
-               log.debug("A resposta já foi enviada. Não é possível redirecionar.");
-               return;
-          }
-
+          // Converte a autenticação para um objeto específico do OAuth2
           OAuth2AuthenticationToken authenticationToken = (OAuth2AuthenticationToken) authentication;
+
+          // Obtém o usuário autenticado via OAuth2
           OAuth2User oauth2User = authenticationToken.getPrincipal();
 
+          // Obtém o e-mail do usuário autenticado via OAuth2
           String email = oauth2User.getAttribute("email");
+
+          // Obtém o nome do usuário autenticado via OAuth2
           String nome = oauth2User.getAttribute("name");
 
+          // Busca o usuário no banco de dados pelo e-mail
           Usuario usuario = usuarioService.findByEmail(email);
 
-          UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-
+          // Se o usuário não existir, cadastra um novo usuário na base de dados
           if (usuario == null) {
-               userDetails = processOAuthUser(email, nome);
-          }
-
-          UsernamePasswordAuthenticationToken newAuth =
-                  new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-          newAuth.setDetails(authentication.getDetails());
-
-          SecurityContextHolder.getContext().setAuthentication(newAuth);
-
-          setDefaultTargetUrl("/api/usuarios/1");
-          super.onAuthenticationSuccess(request, response, newAuth);
-     }
-
-     private UserDetails processOAuthUser(String email, String nome) {
-          Usuario usuario = usuarioService.findByEmail(email);
-          if (usuario == null) {
-               log.debug("Creating new user for email: {}", email);
                usuario = new Usuario();
                usuario.setEmail(email);
                usuario.setNome(nome);
-               final String SENHA = "123";
-               usuario.setSenha(passwordEncoder.encode(SENHA));
+               final String SENHA_PADRAO = "321"; // Senha padrão para usuários autenticados via OAuth2
+               usuario.setSenha(passwordEncoder.encode(SENHA_PADRAO)); // Codifica a senha
                Role role = roleRepository.findById(1L)
                        .orElseThrow(() -> new RuntimeException("Role com ID 1 não encontrado"));
-               usuario.setRoles(Set.of(role));
-               usuario.setDataCadastro(LocalDateTime.now());
+               usuario.setRoles(Set.of(role)); // Define o perfil do usuário
+               usuario.setDataCadastro(LocalDateTime.now()); // Define a data de criação
 
                usuarioService.saveEntity(usuario);
           }
-          return usuario;
+
+          // Cria um objeto de autenticação personalizada baseado no usuário encontrado
+          CustomAuthentication customAuthentication = new CustomAuthentication(usuario);
+
+          // Define a autenticação personalizada no contexto de segurança do Spring Security
+          SecurityContextHolder.getContext().setAuthentication(customAuthentication);
+
+          // Define a URL padrão de redirecionamento
+          setDefaultTargetUrl("/home");
+
+          // Chama o comportamento padrão de sucesso APENAS UMA VEZ, após processar tudo
+          super.onAuthenticationSuccess(request, response, customAuthentication);
      }
+
 }
