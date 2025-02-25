@@ -1,4 +1,7 @@
-<img src="./IMG/banner.png" alt=""/> <br><br>
+
+<img src="./img/banner.png"  alt="banner"/> 
+<br>
+<br>
 
 # Taskify
 [![NPM](https://img.shields.io/npm/l/react)](https://github.com/SEU_USUARIO/taskify/blob/main/LICENSE)
