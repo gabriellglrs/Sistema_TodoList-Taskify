@@ -1,7 +1,7 @@
 
+<img width=100% src="https://capsule-render.vercel.app/api?type=waving&color=4C89F8&height=120&section=header"/>
+
 <img src="./img/banner.png"  alt="banner"/> 
-<br>
-<br>
 
 # Taskify
 [![NPM](https://img.shields.io/npm/l/react)](https://github.com/SEU_USUARIO/taskify/blob/main/LICENSE)
